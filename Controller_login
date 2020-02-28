@@ -1,0 +1,56 @@
+<?php
+    #INICIO DE SESION
+    session_start();
+    #IMPORTAR LAS CLASES 
+	require_once ('../MODELO/VO/modelo_Apprenticie.php');
+	require_once ('../MODELO/DAO/modelo_Apprenticie_dao.php');
+	require_once ('../MODELO/DAO/modelo_File_dao.php');
+    
+    #INSTANCIAR LAS CLASES
+	$apprenticies = new Apprenticies();
+	$apprenticies_dao = new Apprenticie_dao();
+	$file_dao = new File_dao();
+    
+    #VALIDAR SI SE OPRIMIO EL BOTON DEL FORMULARIO APRENDIZ
+	if (isset($_POST['enter_apprentice'])) {
+		#CAPTURAR Y ALMACENAR LOS DATOS
+		$apprenticies->setapld(intval($_POST['id']));		
+		$apprenticies->setapPassaword($_POST['password']);
+        
+        #LLAMAR Y ENVIAR OBJETO DE LA CLASE APPRENTICES 
+        $result = $apprenticies_dao->validate_trainee($apprenticies);
+        #VERIFICAR EL RESULTADO DE LA VALIDACION DE LOS DATOS
+        if ($result != "") {
+            #$day = $file_dao->validate_day(intval($result));
+            #$_SESSION['mensaje']=$day;
+        	#SI LA VALIDACION ES CORRECTA EL APRENDIZ INGRESA PARA VOTAR
+        	header('Location: ../VISTA/vista_aprendiz.php');
+        }else{
+        	#SI LA VALIDACION ES INCORRECTA SE RETORNA A LA INTERFAZ PRINCIPAL Y SE DESPLEGA LA RESPUESTA
+        	$_SESSION['mensaje']=$result;
+        	header('Location: ../VISTA/vista_login.php');
+        }
+	}
+    
+    #VALIDAR SI SE OPRIME EL BOTON DEL FORMULARIO FUNCIONARIO
+    if (isset($_POST['enter_administrator'])) {
+    	define ("USER", "sena2020");
+    	define ("PASSWORD", "12345");		
+
+		if ($_POST['user_admin'] == USER) {
+			if ($_POST['password_admin'] == PASSWORD) {
+				header('Location: ../VISTA/vista_funcionario.php');
+			}else{
+				$_SESSION['mensaje']= "La contrasela del funcionario no coincide";
+				header('Location: ../VISTA/vista_login.php');
+			}			
+		}else{
+			$_SESSION['mensaje']= "El usuario del funcionario no conincide";
+			header('Location: ../VISTA/vista_login.php');
+		}
+		
+
+		
+	}
+
+?>
